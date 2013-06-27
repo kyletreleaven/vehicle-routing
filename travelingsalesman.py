@@ -8,6 +8,8 @@ import numpy as np
 """ Note to self: for BASIC persistence, use primitive data types stored in a dict, and pickle the dict. """
 import pickle
 
+from matching import max_weight_matching
+
 
 
 
