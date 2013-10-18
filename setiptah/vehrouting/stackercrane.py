@@ -3,7 +3,7 @@
 import itertools
 import networkx as nx
 
-from matching import max_weight_matching
+from setiptah.matching import max_weight_matching
 
 
 
@@ -163,7 +163,7 @@ class StackerCraneFHK(object) :
         # associate a direction (from head to tail); insert into PRETOUR
         # (Also, insert the arcs...)
         PRETOUR = nx.MultiDiGraph()
-        for ( arc1, side ), ( arc2, throw ) in MATCH.iteritems() :
+        for ( arc1, side ), ( arc2, throw ) in cls.MATCH.iteritems() :
             if not side == 'head' : continue
             head, tail = arc1[1], arc2[0]
             PRETOUR.add_edge( head, tail )
@@ -571,8 +571,8 @@ if __name__ == '__main__' :
     from mpl_toolkits.mplot3d import axes3d
     from matplotlib.collections import PolyCollection
     
-    from dynpdp import DemandBatch, PickupDeliveryDemandBatch, StackerCraneTour
-    from dynpdp.random.demand import demands_centeredcube
+    #from dynpdp import DemandBatch, PickupDeliveryDemandBatch, StackerCraneTour
+    #from dynpdp.random.demand import demands_centeredcube
     # debug
     fhk = StackerCraneFHK
     
@@ -618,8 +618,8 @@ if __name__ == '__main__' :
 
     
     #stuff = StackerCraneFHK.PREPROCESS( E, A, vs )
-    #stuff = StackerCraneFHK.LARGEARCS( E, A )    # LARGEARCS seems to be working!
-    stuff = StackerCraneFHK.SMALLARCS( E, A )
+    LA = StackerCraneFHK.LARGEARCS( E, A )    # LARGEARCS seems to be working!
+    SA = StackerCraneFHK.SMALLARCS( E, A )
     
     
     
