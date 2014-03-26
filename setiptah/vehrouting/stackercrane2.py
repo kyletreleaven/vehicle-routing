@@ -179,11 +179,12 @@ def WALKCOST( walk, arcs, getTail, getHead, distance ) :
         arci, arcj = arcs[i], arcs[j]
         return distance( getHead(arci), getTail(arcj) )
     
-    i = walk[0]
-    total = arccost( i )
-    for i, j in zip( walk[:-1], walk[1:] ) :
-        total += edgecost( i, j )
-    total += arccost( j )
+    i = None
+    total = 0.
+    for j in walk :
+        if not i is None : total += edgecost( i, j )
+        total += arccost( j )
+        i = j
     
     return total
     
@@ -243,6 +244,10 @@ def ASSIGNFRAGS( seqs, agents, arcs, getTail, getHead, distance ) :
     # for each agent and its location
     for agent, x in agents.iteritems() :
         def options( seq ) :
+            if not len( seq ) > 0 :
+                yield 0., None
+                return
+            
             for startidx, arcidx in enumerate( seq ) :
                 arc = arcs[arcidx]
                 yield distance( x, getTail( arc ) ), startidx
@@ -266,6 +271,7 @@ def ASSIGNFRAGS( seqs, agents, arcs, getTail, getHead, distance ) :
         
         seq = seqs[i]
         assign[agent] = seq[startidx:] + seq[:startidx]
+            # apparently, this works with empty lists and None
     
     return assign
     
@@ -325,7 +331,8 @@ if __name__ == '__main__' :
     sample = lambda : np.random.rand(2)
     def distance( x, y ) : return np.linalg.norm( y - x )
     
-    arcs = [ Arc( sample(), sample()) for i in xrange(100) ]
+    N = 100
+    arcs = [ Arc( sample(), sample()) for i in xrange(N) ]
     getHead = lambda arc : arc.getOrigin()
     getTail = lambda arc : arc.getDestination()
     
@@ -382,8 +389,9 @@ if __name__ == '__main__' :
             
             walkgraphs[agent] = walkgraph
             
-        plt.figure()
+        
         for agent in agents :
+            plt.figure()
             nx.draw( walkgraphs[agent], pos=pos )
         
     
