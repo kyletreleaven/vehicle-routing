@@ -26,11 +26,15 @@ else :
 
 
 
-def CYCLE2WALK( cycle ) :
+def CYCLE2WALK( cycle, start=None ) :
     walk = []
     chain = cycle.copy()
     
-    j = chain.iterkeys().next()
+    if start is None :
+        j = chain.iterkeys().next()
+    else :
+        j = start
+        
     while j in chain :
         i = j
         walk.append(i)
@@ -202,7 +206,7 @@ def SPLITTOUR( tour, N, arcs, getTail, getHead, distance, start=None ) :
         arc = arcs[i]
         return distance( getTail(arc), getHead(arc) )
     
-    def edgecost( i, j ) : 
+    def edgecost( i, j ) :
         arci, arcj = arcs[i], arcs[j]
         return distance( getHead(arci), getTail(arcj) )
     
@@ -277,20 +281,30 @@ def ASSIGNFRAGS( seqs, agents, arcs, getTail, getHead, distance ) :
     
     
     
+def SPLITANDASSIGN( tour, agents, arcs, getTail, getHead, distance, start=None ) :
+    seqs = SPLITTOUR( tour, len( agents ), arcs, getTail, getHead, distance, start )
+    assign = ASSIGNFRAGS( seqs, agents, arcs, getTail, getHead, distance )
+    
+    return assign
     
     
     
-
+    
 def kLARGEARCS( arcs, agents, getTail, getHead, distance ) :
     # compute largearcs tour
     tour = LARGEARCS( arcs, getTail, getHead, distance )
     
-    # split the tour into fragments
-    n = len( agents )
-    seqs = SPLITTOUR( tour, n, arcs, getTail, getHead, distance )
+    if False :
+        # split the tour into fragments
+        n = len( agents )
+        seqs = SPLITTOUR( tour, n, arcs, getTail, getHead, distance )
+        
+        # assign the fragments
+        assign = ASSIGNFRAGS( seqs, agents, arcs, getTail, getHead, distance )
     
-    # assign the fragments
-    assign = ASSIGNFRAGS( seqs, agents, arcs, getTail, getHead, distance )
+    else :
+        assign = SPLITANDASSIGN( tour, agents, arcs, getTail, getHead, distance )
+        
     return assign
 
 
@@ -366,7 +380,7 @@ if __name__ == '__main__' :
     
     walks = kLARGEARCS( arcs, agents, getTail, getHead, distance )
     costs = { i : WALKCOST( walk, arcs, getTail, getHead, distance )
-             for i, walk in walks.iteritems() } 
+             for i, walk in walks.iteritems() }
     
     if True :
         for agent, x in agents.iteritems() :
