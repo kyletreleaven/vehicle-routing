@@ -39,9 +39,10 @@ def ODDNODES( graph ) :
 ORIGINAL = 0
 EXTRA = 1
 
-def ROUTEINSPECTION( graph, weight_attr='weight' ) :
+def ROUTEINSPECTION( graph, weight_attr='length' ) :
     """
-    graph should be a weighted multi-graph (undirected)
+    input graph should be a roadmap, i.e., a weighted multi-digraph;
+    however, the algorithm assumes no one-way roads
     """
     workgraph = nx.MultiGraph()
     
@@ -58,7 +59,8 @@ def ROUTEINSPECTION( graph, weight_attr='weight' ) :
             if t == s : continue
             path = nx.shortest_path( graph, s, t, weight=weight_attr )
             pathlen = PATHLEN( path, graph, weight_attr )
-            met.add_edge( s, t, weight=-pathlen, path=path )    # want min cost
+            # use weight attribute for matching, want min cost!
+            met.add_edge( s, t, weight=-pathlen, path=path )
     match = nx.max_weight_matching( met, maxcardinality=True )
     
     extras = itertools.count()
@@ -102,7 +104,6 @@ def ROUTEINSPECTION( graph, weight_attr='weight' ) :
 
 
 if __name__ == '__main__' :
-    
     
     g = nx.MultiGraph()
     g.add_edge(0,1,'A',weight=1.)
